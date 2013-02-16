@@ -35,7 +35,7 @@ def grouped(iterable, n):
 
 def convert_to_html(msg):
 	l = splitter.split(msg)
-	r = [l[0]]
+	r = [l[0].replace("&","&amp;").replace(">","&gt;").replace("<","&lt;")]
 	stack = []
 	for style, text in grouped(l[1:],2):
 		if style not in 'klmno':
