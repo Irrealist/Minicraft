@@ -3,6 +3,8 @@ import re
 from itertools import izip
 
 splitter = re.compile(u'§(.)')
+# from Minecraft (MCP) + a little fiddling to get re.sub() to behave
+url = re.compile(u'(((https?)://)?)([-\\w_\\.]{2,}\\.[a-z]{2,4})(/?\\S*)')
 
 styles = {
 	'0':('<span style="color:#000000;">','</span>'),
@@ -34,6 +36,7 @@ def grouped(iterable, n):
     return izip(*[iter(iterable)]*n)
 
 def convert_to_html(msg):
+	msg = url.sub("<a href='#' style='color: #009900;'>\\1\\4\\5</a>", msg)
 	l = splitter.split(msg)
 	r = [l[0].replace("&","&amp;").replace(">","&gt;").replace("<","&lt;")]
 	stack = []
