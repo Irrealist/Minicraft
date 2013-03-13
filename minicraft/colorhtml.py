@@ -3,8 +3,6 @@ import re
 from itertools import izip
 
 splitter = re.compile(u'§(.)')
-# from Minecraft (MCP) + a little fiddling to get re.sub() to behave
-url = re.compile(u'(((https?)://)?)([-\\w_\\.]{2,}\\.[a-z]{2,4})(/?\\S*)')
 
 styles = {
 	'0':('<span style="color:#000000;">','</span>'),
@@ -35,10 +33,12 @@ def grouped(iterable, n):
     "s -> (s0,s1,s2,...sn-1), (sn,sn+1,sn+2,...s2n-1), (s2n,s2n+1,s2n+2,...s3n-1), ..."
     return izip(*[iter(iterable)]*n)
 
+def escape(string):
+	return string.replace("&","&amp;").replace(">","&gt;").replace("<","&lt;")
+
 def convert_to_html(msg):
-	msg = url.sub("<a href='#' style='color: #009900;'>\\1\\4\\5</a>", msg)
 	l = splitter.split(msg)
-	r = [l[0].replace("&","&amp;").replace(">","&gt;").replace("<","&lt;")]
+	r = [escape(l[0])]
 	stack = []
 	for style, text in grouped(l[1:],2):
 		if style not in 'klmno':
@@ -48,6 +48,6 @@ def convert_to_html(msg):
 			open, end = styles[style]
 			r.append(open)
 			stack.append(end)
-		r.append(text.replace("&","&amp;").replace(">","&gt;").replace("<","&lt;"))
+		r.append(escape(text))
 	r.extend(reversed(stack))
 	return ''.join(r)
